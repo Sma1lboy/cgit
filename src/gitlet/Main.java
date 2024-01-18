@@ -1,18 +1,22 @@
 package gitlet;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 public class Main {
 
     public static Repository repo = new Repository();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             exitMessage("Please enter a command.");
-
         }
-        if (args[1].equals("init") && args[1].length() == 2) {
+        System.out.println(Arrays.toString(args));
+        if (args[0].equals("init") && args.length == 1) {
             repo.init();
-        } else {
-            switch (args[1]) {
+        }
+        else {
+            switch (args[0]) {
                 case "add":
 
                     break;
@@ -62,10 +66,8 @@ public class Main {
                     break;
                 case "pull":
                     break;
-
                 default:
                     exitMessage("No command with that name exists.");
-
                     break;
             }
         }
