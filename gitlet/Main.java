@@ -3,7 +3,7 @@ package me.gitlet;
 import me.gitlet.models.Repositories;
 import me.gitlet.models.Repository;
 
-public class Gitlet {
+public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {
             exitMessage("Please enter a command.");
