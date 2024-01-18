@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 /**
  * Assorted utilities.
  * 
@@ -253,5 +255,11 @@ class Utils {
     static void message(String msg, Object... args) {
         System.out.printf(msg, args);
         System.out.println();
+    }
+}
+
+class GitletException extends RuntimeException {
+    public GitletException(String str) {
+
     }
 }
