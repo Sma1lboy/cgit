@@ -1,11 +1,14 @@
 package gitlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 public class Main {
 
     public static Repository repo = new Repository();
+
+    public static String CURR_DIR = System.getProperty("user.dir");
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
@@ -14,22 +17,24 @@ public class Main {
         System.out.println(Arrays.toString(args));
         if (args[0].equals("init") && args.length == 1) {
             repo.init();
-        }
-        else {
+        } else {
             switch (args[0]) {
                 case "add":
-
+                    File filepath = Utils.join(CURR_DIR, args[1]);
+                    if (!filepath.exists()) {
+                        exitMessage("file doesn't exist: " + filepath);
+                    }
+                    repo.add(args[1]);
                     break;
                 case "commit":
                     if (args.length < 2) {
                         exitMessage("Please enter a commit message.");
 
                     }
-                    repo = Repositories.getRepo();
                     if (repo.isStageEmpty()) {
                         exitMessage("No changes added to the commit.");
-
                     }
+                    repo.commit(args[1]);
                     break;
                 case "rm":
 
@@ -45,6 +50,7 @@ public class Main {
                 case "find":
                     break;
                 case "status":
+                    repo.status();
                     break;
                 case "checkout":
                     break;
