@@ -37,4 +37,15 @@ public class Head {
         Branch branch = Utils.readObject(branchFile, Branch.class);
         return branch.getHead();
     }
+
+    /**
+     * Showing the current pointer branch log
+     */
+    public static void showLog() {
+        Commit curr = getGlobalHEAD();
+        while (curr != null) {
+
+        }
+    }
+
 }
