@@ -43,8 +43,10 @@ public class Head {
      */
     public static void showLog() {
         Commit curr = getGlobalHEAD();
-        while (curr != null) {
-
+        while (curr.getDate() != null) {
+            Prompt.promptLog(curr);
+            File prevCommitFile = Utils.join(Repositories.COMMITS_FOLDER, curr.parentHash);
+            curr = Utils.readObject(prevCommitFile, Commit.class);
         }
     }
 
