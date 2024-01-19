@@ -73,4 +73,13 @@ public class Commit implements Serializable {
         File commitFile = Utils.join(Repositories.COMMITS_FOLDER, this.sha1);
         Utils.writeObject(commitFile, this);
     }
+
+    public Commit getParent() {
+        File parentFile = Utils.join(Repositories.COMMITS_FOLDER, parentHash);
+        return Utils.readObject(parentFile, Commit.class);
+    }
+
+    public String getDate() {
+        return this.timestamp;
+    }
 }
