@@ -1,8 +1,21 @@
 package gitlet;
 
-public class Blob {
+import java.io.File;
+import java.io.Serializable;
+
+public class Blob implements Serializable {
     public String filename;
-    public Byte[] content;
+    public byte[] content;
     private String sha1;
+
+    public Blob(String filename, File filepath) {
+        content = Utils.readContents(filepath);
+        this.filename = filename;
+        this.sha1 = Utils.sha1(content);
+    }
+
+    public String getSha1() {
+        return this.sha1;
+    }
 
 }
