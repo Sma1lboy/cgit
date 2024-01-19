@@ -81,9 +81,7 @@ public class Stage {
             blobFile.delete();
         }
         stagedRemoval.clear();
-
         save();
-
     }
 
 }

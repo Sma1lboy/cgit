@@ -43,9 +43,8 @@ public class Repository {
         return Stage.isStageEmpty();
     }
 
-    public void showLog() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'showLog'");
+    public void log() {
+        Head.showLog();
     }
 
     public void add(String filename) throws IOException {

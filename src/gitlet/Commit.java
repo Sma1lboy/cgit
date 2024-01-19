@@ -82,4 +82,5 @@ public class Commit implements Serializable {
     public String getDate() {
         return this.timestamp;
     }
+
 }

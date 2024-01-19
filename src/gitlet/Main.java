@@ -40,9 +40,7 @@ public class Main {
 
                     break;
                 case "log":
-
-                    repo = Repositories.getRepo();
-                    repo.showLog();
+                    repo.log();
                     break;
 
                 case "global-log":
