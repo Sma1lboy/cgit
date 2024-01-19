@@ -22,9 +22,10 @@ public class Commit implements Serializable {
     String timestamp;
     String message;
     /**
-     * the snapshot of blobs
+     * the current commit snapshot of blobs
+     * [filename, SHA1 of blobs]
      */
-    HashMap<String, String> blobs;
+    private HashMap<String, String> blobs;
 
     private boolean initFlag = false;
 
@@ -83,4 +84,7 @@ public class Commit implements Serializable {
         return this.timestamp;
     }
 
+    public HashMap<String, String> getCloneBlobs() {
+        return new HashMap<>(this.blobs);
+    }
 }

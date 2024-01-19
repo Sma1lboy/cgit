@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Repository
@@ -57,7 +59,14 @@ public class Repository {
 
     public void commit(String message) throws IOException {
         Commit prevCommit = Head.getGlobalHEAD();
-        Commit commit = new Commit(message, prevCommit.getSHA1(), Stage.stagedAddition, false);
+        HashMap<String, String> blobs = prevCommit.getCloneBlobs();
+        for (Entry<String, String> entry : Stage.stagedAddition.entrySet()) {
+            blobs.put(entry.getValue(), entry.getValue());
+        }
+        for (Entry<String, String> entry : Stage.stagedRemoval.entrySet()) {
+            blobs.remove(entry.getValue());
+        }
+        Commit commit = new Commit(message, prevCommit.getSHA1(), blobs, false);
         Stage.clear();
         Head.setGlobalHEAD(branch, commit);
         Head.setBranchHEAD(branch, commit);
