@@ -11,7 +11,7 @@ import javax.swing.RowFilter.Entry;
  * staging area
  */
 public class Stage {
-    // store the filename and sha1 blob
+    // store the sha1 filepath and sha1 blob
     static HashMap<String, String> stagedAddition;
     static HashMap<String, String> stagedRemoval;
     static File stageAdditionFile = Utils.join(Repositories.STAGE_FOLDER, "stageaddition");
@@ -37,17 +37,17 @@ public class Stage {
     }
 
     // save file in stage Addition
-    public static void addFile(String filename) throws IOException {
+    public static void addFile(String filename, File filepath) throws IOException {
         load();
 
-        Blob blob = new Blob(filename, Utils.join(Repositories.CWD, filename));
+        Blob blob = new Blob(filename, filepath);
         File blobFile = Utils.join(Repositories.BLOB_FOLDER, blob.getSha1());
         if (blobFile.exists()) {
             return;
         }
         Utils.writeObject(blobFile, blob);
         // add to stage
-        stagedAddition.put(filename, blob.getSha1());
+        stagedAddition.put(filepath.toString(), blob.getSha1());
         // save it
         save();
     }
@@ -55,8 +55,9 @@ public class Stage {
     public static void showAdditionFiles() throws IOException {
         load();
         Prompt.logTitle("Staged Files");
-        for (String key : stagedAddition.keySet()) {
-            Prompt.log(key);
+        for (String value : stagedAddition.values()) {
+            Blob blob = Utils.readObject(Utils.join(Repositories.BLOB_FOLDER, value), Blob.class);
+            Prompt.log(blob.filename);
         }
     }
 

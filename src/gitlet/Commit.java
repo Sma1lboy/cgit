@@ -23,7 +23,7 @@ public class Commit implements Serializable {
     String message;
     /**
      * the current commit snapshot of blobs
-     * [filename, SHA1 of blobs]
+     * [file path, SHA1 of blobs]
      */
     private HashMap<String, String> blobs;
 

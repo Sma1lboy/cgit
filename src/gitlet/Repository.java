@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +50,8 @@ public class Repository {
         Head.showLog();
     }
 
-    public void add(String filename) throws IOException {
-        Stage.addFile(filename);
+    public void add(String filename, File filepath) throws IOException {
+        Stage.addFile(filename, filepath);
     }
 
     public void status() throws IOException {

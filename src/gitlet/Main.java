@@ -24,7 +24,7 @@ public class Main {
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
-                    repo.add(args[1]);
+                    repo.add(args[1], filepath);
                     break;
                 case "commit":
                     if (args.length < 2) {
