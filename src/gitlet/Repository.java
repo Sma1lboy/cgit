@@ -11,8 +11,9 @@ public class Repository {
     public static final String SENTINEL_COMMIT_ID = "6cf73ef132f3f89a94f4c73ec879aa79ba529e86";
     public static String INIT_PARENT_SHA1 = "0000000000000000000000000000000000000000";
 
-    Head head = new Head();
+    // HEAD is
     Stage stagingArea = new Stage();
+    String branch = "master";
 
     public void init() throws IOException {
         // init dirs
@@ -38,12 +39,29 @@ public class Repository {
         Repositories.BLOB_FOLDER.mkdir();
     }
 
-    public boolean isStageEmpty() {
-        return true;
+    public boolean isStageEmpty() throws IOException {
+        return Stage.isStageEmpty();
     }
 
     public void showLog() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'showLog'");
+    }
+
+    public void add(String filename) throws IOException {
+        Stage.addFile(filename);
+    }
+
+    public void status() throws IOException {
+        Stage.showAdditionFiles();
+    }
+
+    public void commit(String message) throws IOException {
+        Commit prevCommit = Head.getGlobalHEAD();
+        Commit commit = new Commit(message, prevCommit.getSHA1(), Stage.stagedAddition, false);
+        Stage.clear();
+        Head.setGlobalHEAD(branch, commit);
+        Head.setBranchHEAD(branch, commit);
+        commit.save();
     }
 }
