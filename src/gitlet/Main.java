@@ -19,13 +19,14 @@ public class Main {
             repo.init();
         } else {
             switch (args[0]) {
-                case "add":
+                case "add": {
                     File filepath = Utils.join(CURR_DIR, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
                     repo.add(args[1], filepath);
                     break;
+                }
                 case "commit":
                     if (args.length < 2) {
                         exitMessage("Please enter a commit message.");
@@ -37,13 +38,18 @@ public class Main {
                     repo.commit(args[1]);
                     break;
                 case "rm":
-
+                    File filepath = Utils.join(CURR_DIR, args[1]);
+                    if (!filepath.exists()) {
+                        exitMessage("file doesn't exist: " + filepath);
+                    }
+                    repo.rm(args[1], filepath);
                     break;
                 case "log":
                     repo.log();
                     break;
 
                 case "global-log":
+                    repo.globalLog();
                     break;
                 case "find":
                     break;
@@ -77,7 +83,7 @@ public class Main {
         }
     }
 
-    private static void exitMessage(Object obj) {
+    public static void exitMessage(Object obj) {
         System.out.println(obj.toString());
         System.exit(0);
     }
