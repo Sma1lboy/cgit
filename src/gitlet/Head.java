@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Head class keep manager which branch we are at
@@ -50,4 +51,28 @@ public class Head {
         }
     }
 
+    /**
+     * Check current HEAD pointer branch contains this file
+     * 
+     * @return
+     */
+    public static boolean containsFile(File filepath) {
+        Commit currCommit = getGlobalHEAD();
+        HashMap<String, String> cloneBlobs = currCommit.getCloneBlobs();
+        for (String key : cloneBlobs.keySet()) {
+            if (key.equals(filepath.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * jump to new branch, we should clone all file from current commit blobs;
+     * 
+     * @return
+     */
+    public static void maintrainBranch() {
+
+    }
 }
