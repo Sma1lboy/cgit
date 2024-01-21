@@ -73,4 +73,32 @@ public class Repository {
         Head.setBranchHEAD(branch, commit);
         commit.save();
     }
+
+    /**
+     * Remove file from staging area
+     * 
+     * @param file
+     * @throws IOException
+     */
+    public void rm(String file, File filepath) throws IOException {
+        if (Stage.containsAdditionFile(filepath)) {
+            Stage.removeFile(filepath);
+        } else if (Head.containsFile(filepath)) {
+            Stage.addRemovalFile(file, filepath);
+        } else {
+            Main.exitMessage("No reason to remove the file.");
+        }
+    }
+
+    public void globalLog() {
+        File[] files = Repositories.COMMITS_FOLDER.listFiles();
+        for (File file : files) {
+            Commit commit = Utils.readObject(file, Commit.class);
+            Prompt.promptLog(commit);
+        }
+    }
+
+    public void checkout(String branch) {
+
+    }
 }
