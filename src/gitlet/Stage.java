@@ -52,6 +52,35 @@ public class Stage {
         save();
     }
 
+    // save file in stage removal
+    public static void addRemovalFile(String filename, File filepath) throws IOException {
+        load();
+        if (containsAdditionFile(filepath)) {
+            return;
+        }
+        Blob blob = new Blob(filename, filepath);
+        stagedRemoval.put(filepath.toString(), blob.getSha1());
+        save();
+    }
+
+    // save file in stage Addition
+    public static void removeFile(File filepath) throws IOException {
+        load();
+        String blobSha1 = stagedAddition.get(filepath.toString());
+        if (blobSha1 == null)
+            return; // check if in stage area
+        File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobSha1);
+        blobFile.delete();
+        stagedAddition.remove(filepath.toString());
+        save();
+    }
+
+    public static boolean containsAdditionFile(File filepath) throws IOException {
+        load();
+
+        return stagedAddition.get(filepath.toString()) != null;
+    }
+
     public static void showAdditionFiles() throws IOException {
         load();
         Prompt.logTitle("Staged Files");
