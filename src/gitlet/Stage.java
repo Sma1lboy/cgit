@@ -77,14 +77,27 @@ public class Stage {
 
     public static boolean containsAdditionFile(File filepath) throws IOException {
         load();
-
         return stagedAddition.get(filepath.toString()) != null;
+    }
+
+    public static boolean containsAdditionFiles() throws IOException {
+        load();
+        return stagedAddition.size() != 0;
     }
 
     public static void showAdditionFiles() throws IOException {
         load();
         Prompt.logTitle("Staged Files");
         for (String value : stagedAddition.values()) {
+            Blob blob = Utils.readObject(Utils.join(Repositories.BLOB_FOLDER, value), Blob.class);
+            Prompt.log(blob.filename);
+        }
+    }
+
+    public static void showRemovalFiles() throws IOException {
+        load();
+        Prompt.logTitle("Removed Files");
+        for (String value : stagedRemoval.values()) {
             Blob blob = Utils.readObject(Utils.join(Repositories.BLOB_FOLDER, value), Blob.class);
             Prompt.log(blob.filename);
         }
@@ -103,10 +116,6 @@ public class Stage {
     public static void clear() throws IOException {
         load();
         stagedAddition.clear();
-        for (Map.Entry<String, String> pair : stagedRemoval.entrySet()) {
-            File blobFile = Utils.join(Repositories.BLOB_FOLDER, pair.getValue());
-            blobFile.delete();
-        }
         stagedRemoval.clear();
         save();
     }
