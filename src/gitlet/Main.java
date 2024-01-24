@@ -61,6 +61,10 @@ public class Main {
                     repo.checkout(args[1]);
                     break;
                 case "branch":
+                    if (args.length < 2) {
+                        exitMessage("You should input a name of the branch");
+                    }
+                    repo.branch(args[1]);
                     break;
                 case "rm-branch":
                     break;

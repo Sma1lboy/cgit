@@ -31,6 +31,11 @@ public class Head {
         return branch.getHead();
     }
 
+    public static Branch getGlobalBranch() {
+        Branch branch = Utils.readObject(Repositories.HEAD, Branch.class);
+        return branch;
+    }
+
     public static void setBranchHEAD(String branchName, Commit commit) {
         Branch branch = new Branch(branchName, commit);
         File branchFile = Utils.join(Repositories.HEAD_REFS_FOLDER, branchName);
@@ -90,6 +95,7 @@ public class Head {
         if (branchHead != null) {
             setGlobalHEAD(version, branchHead);
             maintainCommit();
+
             return;
         }
         Commit versionCommit = findCommit(version);
@@ -115,6 +121,36 @@ public class Head {
                 }
                 if (isSame) {
                     return curr;
+                }
+                curr = curr.getParent();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param version
+     * @return
+     */
+    private static Branch findBranchByCommit(String version) {
+        List<Branch> branches = getBranches();
+        for (Branch branch : branches) {
+            if (branch.getBranchName().equals(version)) {
+                return branch;
+            }
+            Commit curr = branch.getHead();
+            while (curr.getDate() != null) {
+                String commitSHA1 = curr.getSHA1();
+                boolean isSame = true;
+                for (int i = 0; i <= 7; i++) {
+                    if (commitSHA1.charAt(i) != version.charAt(i)) {
+                        isSame = false;
+                        break;
+                    }
+                }
+                if (isSame) {
+                    return branch;
                 }
                 curr = curr.getParent();
             }
@@ -177,9 +213,11 @@ public class Head {
 
     public static void showBranches() {
         List<Branch> branches = getBranches();
-        Prompt.log("Branches");
+        Prompt.logTitle("Branches");
+        Branch currBranch = findBranchByCommit(getGlobalBranch().getBranchName());
         branches.forEach(branch -> {
-            Prompt.log(branch.getBranchName());
+            boolean isCurrentBranch = currBranch.getBranchName().equals(branch.getBranchName());
+            Prompt.log((isCurrentBranch ? "*" : "") + branch.getBranchName());
         });
     }
 }
