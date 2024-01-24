@@ -55,6 +55,8 @@ public class Repository {
     }
 
     public void status() throws IOException {
+        Head.showBranches();
+        System.out.println();
         Stage.showAdditionFiles();
         System.out.println();
         Stage.showRemovalFiles();
@@ -108,5 +110,14 @@ public class Repository {
 
     public void checkout(String branch) throws IOException {
         Head.checkout(branch);
+    }
+
+    public void branch(String branchName) {
+        if (Head.containsBranch(branchName)) {
+            Main.exitMessage("A branch with that name already exists.");
+        }
+        Commit commit = Head.getGlobalHEAD();
+        Head.setGlobalHEAD(branchName, commit);
+        Head.setBranchHEAD(branchName, commit);
     }
 }

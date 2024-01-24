@@ -83,7 +83,6 @@ public class Head {
     }
 
     public static void checkout(String version) throws IOException {
-        // TODO if there is untrack file, you should track or stash first
         if (Stage.containsAdditionFiles()) {
             Main.exitMessage("Please commit your changes or stash them before you switch branches.");
         }
@@ -167,5 +166,20 @@ public class Head {
             fileWriter.write(blob.content);
             fileWriter.close();
         }
+    }
+
+    // it might separate into Branches class
+    public static boolean containsBranch(String branchName) {
+        File[] branchFiles = Repositories.HEAD_REFS_FOLDER.listFiles();
+        List<File> res = Arrays.stream(branchFiles).filter(file -> file.getName().equals(branchName)).toList();
+        return res.size() == 1;
+    }
+
+    public static void showBranches() {
+        List<Branch> branches = getBranches();
+        Prompt.log("Branches");
+        branches.forEach(branch -> {
+            Prompt.log(branch.getBranchName());
+        });
     }
 }
