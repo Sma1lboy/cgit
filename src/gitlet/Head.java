@@ -84,12 +84,10 @@ public class Head {
 
     public static void checkout(String version) throws IOException {
         // TODO if there is untrack file, you should track or stash first
-        if (containsUntrackFile()) {
-            Main.exitMessage("You should clear untrack files");
-        }
         if (Stage.containsAdditionFiles()) {
-            Main.exitMessage("You should commit all addition file or stash them");
+            Main.exitMessage("Please commit your changes or stash them before you switch branches.");
         }
+        // file modified
         List<Branch> branches = getBranches();
         for (Branch branch : branches) {
             Commit curr = branch.getHead();
@@ -106,7 +104,8 @@ public class Head {
                     // set HEAD pointer to it
                     setGlobalHEAD(version, curr);
                     // maintain root directory
-                    maintrainBranch();
+                    maintainBranch();
+                    break;
                 }
                 curr = curr.getParent();
             }
@@ -121,7 +120,7 @@ public class Head {
      * @require before we call this method, make sure there is no staging file and
      *          untrack file
      */
-    public static void maintrainBranch() throws IOException {
+    public static void maintainBranch() throws IOException {
         Commit headCommit = getGlobalHEAD();
         maintainDirectory(headCommit);
     }
@@ -147,7 +146,7 @@ public class Head {
     }
 
     private static boolean containsUntrackDir(File dir) {
-        File[] rootDir = Utils.join(Repositories.CURR_DIR).listFiles();
+        File[] rootDir = dir.listFiles();
         Map<String, String> blobs = getGlobalHEAD().getCloneBlobs();
         boolean res = true;
         for (File file : rootDir) {
@@ -160,5 +159,33 @@ public class Head {
             }
         }
         return true;
+    }
+
+    private static boolean containsModifiedFile() {
+        File rootDir = Utils.join(Repositories.CURR_DIR);
+        return containsModifiedDir(rootDir);
+    }
+
+    private static boolean containsModifiedDir(File dir) {
+        File[] rootDir = dir.listFiles();
+        Map<String, String> blobs = getGlobalHEAD().getCloneBlobs();
+        boolean res = true;
+        for (File file : rootDir) {
+            if (file.isDirectory()) {
+                res = res && containsUntrackDir(file);
+            } else if (file.isFile()) {
+                if (blobs.containsKey(file.toString())) {
+                    String blobFilepath = blobs.get(file.toString());
+                    File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobFilepath);
+                    Blob originBlob = Utils.readObject(blobFile, Blob.class);
+                    Blob newBlob = Utils.readObject(file, Blob.class);
+                    if (originBlob.content != newBlob.content) {
+                        return true;
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 }
