@@ -56,16 +56,21 @@ public class Repository {
 
     public void status() throws IOException {
         Stage.showAdditionFiles();
+        System.out.println();
+        Stage.showRemovalFiles();
+        System.out.println();
     }
 
     public void commit(String message) throws IOException {
         Commit prevCommit = Head.getGlobalHEAD();
         HashMap<String, String> blobs = prevCommit.getCloneBlobs();
         for (Entry<String, String> entry : Stage.stagedAddition.entrySet()) {
-            blobs.put(entry.getValue(), entry.getValue());
+            blobs.put(entry.getKey(), entry.getValue());
         }
         for (Entry<String, String> entry : Stage.stagedRemoval.entrySet()) {
-            blobs.remove(entry.getValue());
+            File file = Utils.join(entry.getKey());
+            file.delete();
+            blobs.remove(entry.getKey());
         }
         Commit commit = new Commit(message, prevCommit.getSHA1(), blobs, false);
         Stage.clear();
