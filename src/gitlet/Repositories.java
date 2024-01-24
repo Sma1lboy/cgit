@@ -14,6 +14,7 @@ public class Repositories {
     public static File STAGE_FOLDER = Utils.join(GITLET_FOLDER, "staging");
     public static File COMMITS_FOLDER = Utils.join(GITLET_FOLDER, "commits");
     public static File BLOB_FOLDER = Utils.join(GITLET_FOLDER, "blobs");
+    public static String CURR_DIR = System.getProperty("user.dir");
 
     /**
      * get caller folder's repo
