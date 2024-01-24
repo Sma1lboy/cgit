@@ -87,7 +87,21 @@ public class Head {
         if (Stage.containsAdditionFiles()) {
             Main.exitMessage("Please commit your changes or stash them before you switch branches.");
         }
-        // file modified
+        Commit branchHead = findBranchHead(version);
+        if (branchHead != null) {
+            setGlobalHEAD(version, branchHead);
+            maintainCommit();
+            return;
+        }
+        Commit versionCommit = findCommit(version);
+        if (versionCommit != null) {
+            setGlobalHEAD(version, versionCommit);
+            maintainCommit();
+        }
+
+    }
+
+    private static Commit findCommit(String version) {
         List<Branch> branches = getBranches();
         for (Branch branch : branches) {
             Commit curr = branch.getHead();
@@ -101,15 +115,22 @@ public class Head {
                     }
                 }
                 if (isSame) {
-                    // set HEAD pointer to it
-                    setGlobalHEAD(version, curr);
-                    // maintain root directory
-                    maintainCommit();
-                    break;
+                    return curr;
                 }
                 curr = curr.getParent();
             }
         }
+        return null;
+    }
+
+    private static Commit findBranchHead(String branchName) {
+        List<Branch> branches = getBranches();
+        for (Branch branch : branches) {
+            if (branch.getBranchName().equals(branchName)) {
+                return branch.getHead();
+            }
+        }
+        return null;
     }
 
     /**
