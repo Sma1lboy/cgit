@@ -8,8 +8,6 @@ public class Main {
 
     public static Repository repo = new Repository();
 
-    public static String CURR_DIR = System.getProperty("user.dir");
-
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             exitMessage("Please enter a command.");
@@ -20,7 +18,7 @@ public class Main {
         } else {
             switch (args[0]) {
                 case "add": {
-                    File filepath = Utils.join(CURR_DIR, args[1]);
+                    File filepath = Utils.join(Repositories.CURR_DIR, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
@@ -38,7 +36,7 @@ public class Main {
                     repo.commit(args[1]);
                     break;
                 case "rm":
-                    File filepath = Utils.join(CURR_DIR, args[1]);
+                    File filepath = Utils.join(Repositories.CURR_DIR, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
