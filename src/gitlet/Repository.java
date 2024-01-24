@@ -62,6 +62,9 @@ public class Repository {
     }
 
     public void commit(String message) throws IOException {
+        if (!Stage.containsAdditionFiles() && !Stage.containsRemovalFiles()) {
+            Main.exitMessage("You should commit with track file");
+        }
         Commit prevCommit = Head.getGlobalHEAD();
         HashMap<String, String> blobs = prevCommit.getCloneBlobs();
         for (Entry<String, String> entry : Stage.stagedAddition.entrySet()) {
@@ -103,7 +106,7 @@ public class Repository {
         }
     }
 
-    public void checkout(String branch) {
-
+    public void checkout(String branch) throws IOException {
+        Head.checkout(branch);
     }
 }
