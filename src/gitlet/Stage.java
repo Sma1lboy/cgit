@@ -1,11 +1,11 @@
 package gitlet;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.RowFilter.Entry;
+import java.util.Map.Entry;
 
 /**
  * staging area
@@ -123,6 +123,55 @@ public class Stage {
         stagedAddition.clear();
         stagedRemoval.clear();
         save();
+    }
+
+    private static boolean containsUntrackFile() {
+        File rootDir = Utils.join(Repositories.CURR_DIR);
+        return containsUntrackDir(rootDir);
+    }
+
+    private static boolean containsUntrackDir(File dir) {
+        File[] rootDir = dir.listFiles();
+        Map<String, String> blobs = Head.getGlobalHEAD().getCloneBlobs();
+        boolean res = true;
+        for (File file : rootDir) {
+            if (file.isDirectory()) {
+                res = res && containsUntrackDir(file);
+            } else if (file.isFile()) {
+                if (!blobs.containsKey(file.toString())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean containsModifiedFile() {
+        File rootDir = Utils.join(Repositories.CURR_DIR);
+        return containsModifiedDir(rootDir);
+    }
+
+    private static boolean containsModifiedDir(File dir) {
+        File[] rootDir = dir.listFiles();
+        Map<String, String> blobs = Head.getGlobalHEAD().getCloneBlobs();
+        boolean res = true;
+        for (File file : rootDir) {
+            if (file.isDirectory()) {
+                res = res && containsUntrackDir(file);
+            } else if (file.isFile()) {
+                if (blobs.containsKey(file.toString())) {
+                    String blobFilepath = blobs.get(file.toString());
+                    File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobFilepath);
+                    Blob originBlob = Utils.readObject(blobFile, Blob.class);
+                    Blob newBlob = Utils.readObject(file, Blob.class);
+                    if (originBlob.content != newBlob.content) {
+                        return true;
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
 }

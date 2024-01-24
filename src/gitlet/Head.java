@@ -104,7 +104,7 @@ public class Head {
                     // set HEAD pointer to it
                     setGlobalHEAD(version, curr);
                     // maintain root directory
-                    maintainBranch();
+                    maintainCommit();
                     break;
                 }
                 curr = curr.getParent();
@@ -113,18 +113,26 @@ public class Head {
     }
 
     /**
-     * jump to new branch, we should clone all file from current commit blobs;
+     * maintain current version commit, make current user_dir with current commit
+     * version
      * 
      * @return
      * @throws IOException
      * @require before we call this method, make sure there is no staging file and
      *          untrack file
      */
-    public static void maintainBranch() throws IOException {
-        Commit headCommit = getGlobalHEAD();
+    public static void maintainCommit() throws IOException {
+        Commit headCommit = Head.getGlobalHEAD();
         maintainDirectory(headCommit);
     }
 
+    /**
+     * Maintain directory base on commit blobs, create the content of commit blobs
+     * if didn't exist.
+     * 
+     * @param commit
+     * @throws IOException
+     */
     private static void maintainDirectory(Commit commit) throws IOException {
         Map<String, String> blobs = commit.getCloneBlobs();
         for (Entry<String, String> entry : blobs.entrySet()) {
@@ -138,54 +146,5 @@ public class Head {
             fileWriter.write(blob.content);
             fileWriter.close();
         }
-    }
-
-    private static boolean containsUntrackFile() {
-        File rootDir = Utils.join(Repositories.CURR_DIR);
-        return containsUntrackDir(rootDir);
-    }
-
-    private static boolean containsUntrackDir(File dir) {
-        File[] rootDir = dir.listFiles();
-        Map<String, String> blobs = getGlobalHEAD().getCloneBlobs();
-        boolean res = true;
-        for (File file : rootDir) {
-            if (file.isDirectory()) {
-                res = res && containsUntrackDir(file);
-            } else if (file.isFile()) {
-                if (!blobs.containsKey(file.toString())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean containsModifiedFile() {
-        File rootDir = Utils.join(Repositories.CURR_DIR);
-        return containsModifiedDir(rootDir);
-    }
-
-    private static boolean containsModifiedDir(File dir) {
-        File[] rootDir = dir.listFiles();
-        Map<String, String> blobs = getGlobalHEAD().getCloneBlobs();
-        boolean res = true;
-        for (File file : rootDir) {
-            if (file.isDirectory()) {
-                res = res && containsUntrackDir(file);
-            } else if (file.isFile()) {
-                if (blobs.containsKey(file.toString())) {
-                    String blobFilepath = blobs.get(file.toString());
-                    File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobFilepath);
-                    Blob originBlob = Utils.readObject(blobFile, Blob.class);
-                    Blob newBlob = Utils.readObject(file, Blob.class);
-                    if (originBlob.content != newBlob.content) {
-                        return true;
-                    }
-
-                }
-            }
-        }
-        return false;
     }
 }
