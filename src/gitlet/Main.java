@@ -55,6 +55,10 @@ public class Main {
                     repo.status();
                     break;
                 case "checkout":
+                    if (args.length < 2) {
+                        exitMessage("You should set version.");
+                    }
+                    repo.checkout(args[1]);
                     break;
                 case "branch":
                     break;

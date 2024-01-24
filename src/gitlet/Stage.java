@@ -85,6 +85,11 @@ public class Stage {
         return stagedAddition.size() != 0;
     }
 
+    public static boolean containsRemovalFiles() throws IOException {
+        load();
+        return stagedRemoval.size() != 0;
+    }
+
     public static void showAdditionFiles() throws IOException {
         load();
         Prompt.logTitle("Staged Files");
