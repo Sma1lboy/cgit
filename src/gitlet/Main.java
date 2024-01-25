@@ -71,6 +71,10 @@ public class Main {
                     repo.branch(args[1]);
                     break;
                 case "rm-branch":
+                    if (args.length < 2) {
+                        exitMessage("You should using this commend with args, check help methods");
+                    }
+                    repo.removeBranch(args[1]);
                     break;
                 case "reset":
                     break;

@@ -121,6 +121,16 @@ public class Repository {
         Head.setBranchHEAD(branchName, commit);
     }
 
+    public void removeBranch(String branchName) {
+        if (!Head.containsBranch(branchName)) {
+            Main.exitMessage("A branch with that name does not exist.");
+        }
+        if (Head.getGlobalBranch().getBranchName().equals(branchName)) {
+            Main.exitMessage("Cannot remove the current branch.");
+        }
+        Branches.remove(branchName);
+    }
+
     public void find(String message) {
         Head.showBranchesByMessage(message);
     }

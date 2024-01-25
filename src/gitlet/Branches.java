@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,5 +20,15 @@ public class Branches {
             }
         });
         return res;
+    }
+
+    /**
+     * Remove Branch with @branchName from gitlet
+     * 
+     * @param branchName
+     */
+    public static void remove(String branchName) {
+        File branchFile = Utils.join(Repositories.HEAD_REFS_FOLDER, branchName);
+        branchFile.delete();
     }
 }
