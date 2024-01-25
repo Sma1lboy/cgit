@@ -16,11 +16,11 @@ import java.util.TimeZone;
  */
 public class Commit implements Serializable {
 
-    String sha1; // hash SHA value
-    String parentHash;
+    private String sha1; // hash SHA value
+    private String parentHash;
     // format of timestamp is Sat Nov 11 12:30:00 2017 -0800
-    String timestamp;
-    String message;
+    private String timestamp;
+    private String message;
     /**
      * the current commit snapshot of blobs
      * [file path, SHA1 of blobs]
@@ -86,5 +86,9 @@ public class Commit implements Serializable {
 
     public HashMap<String, String> getCloneBlobs() {
         return new HashMap<>(this.blobs);
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 }

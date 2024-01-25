@@ -17,7 +17,7 @@ public class Prompt {
         System.out.println("===");
         System.out.println("commit " + commit.getSHA1());
         System.out.println("Date: " + commit.getDate());
-        System.out.println(commit.message);
+        System.out.println(commit.getMessage());
         System.out.println();
     }
 }
