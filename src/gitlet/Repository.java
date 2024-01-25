@@ -120,4 +120,8 @@ public class Repository {
         Head.setGlobalHEAD(branchName, commit);
         Head.setBranchHEAD(branchName, commit);
     }
+
+    public void find(String message) {
+        Head.showBranchesByMessage(message);
+    }
 }
