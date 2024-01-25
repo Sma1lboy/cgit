@@ -31,11 +31,6 @@ public class Head {
         return branch.getHead();
     }
 
-    public static Branch getGlobalBranch() {
-        Branch branch = Utils.readObject(Repositories.HEAD, Branch.class);
-        return branch;
-    }
-
     public static void setBranchHEAD(String branchName, Commit commit) {
         Branch branch = new Branch(branchName, commit);
         File branchFile = Utils.join(Repositories.HEAD_REFS_FOLDER, branchName);
@@ -50,13 +45,6 @@ public class Head {
         }
         Branch branch = Utils.readObject(branchFile, Branch.class);
         return branch.getHead();
-    }
-
-    public static List<Branch> getBranches() {
-        File[] branchFiles = Utils.join(Repositories.HEAD_REFS_FOLDER).listFiles();
-        List<Branch> branches = Arrays.stream(branchFiles).map(branch -> Utils.readObject(branch, Branch.class))
-                .toList();
-        return branches;
     }
 
     /**
@@ -78,12 +66,7 @@ public class Head {
     public static boolean containsFile(File filepath) {
         Commit currCommit = getGlobalHEAD();
         HashMap<String, String> cloneBlobs = currCommit.getCloneBlobs();
-        for (String key : cloneBlobs.keySet()) {
-            if (key.equals(filepath.toString())) {
-                return true;
-            }
-        }
-        return false;
+        return cloneBlobs.containsKey(filepath.toPath());
     }
 
     public static void checkout(String version) throws IOException {
@@ -93,72 +76,26 @@ public class Head {
         Commit branchHead = findBranchHead(version);
         if (branchHead != null) {
             setGlobalHEAD(version, branchHead);
-            maintainCommit();
+            maintainHead();
 
             return;
         }
-        Commit versionCommit = findCommit(version);
+        Commit versionCommit = Commits.findByVersion(version);
         if (versionCommit != null) {
             setGlobalHEAD(version, versionCommit);
-            maintainCommit();
+            maintainHead();
         }
-
     }
 
-    private static Commit findCommit(String version) {
-        List<Branch> branches = getBranches();
-        for (Branch branch : branches) {
-            Commit curr = branch.getHead();
-            while (curr.getDate() != null) {
-                String commitSHA1 = curr.getSHA1();
-                boolean isSame = true;
-                for (int i = 0; i <= 7; i++) {
-                    if (commitSHA1.charAt(i) != version.charAt(i)) {
-                        isSame = false;
-                        break;
-                    }
-                }
-                if (isSame) {
-                    return curr;
-                }
-                curr = curr.getParent();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @param version
-     * @return
-     */
-    private static Branch findBranchByCommit(String version) {
-        List<Branch> branches = getBranches();
-        for (Branch branch : branches) {
-            if (branch.getBranchName().equals(version)) {
-                return branch;
-            }
-            Commit curr = branch.getHead();
-            while (curr.getDate() != null) {
-                String commitSHA1 = curr.getSHA1();
-                boolean isSame = true;
-                for (int i = 0; i <= 7; i++) {
-                    if (commitSHA1.charAt(i) != version.charAt(i)) {
-                        isSame = false;
-                        break;
-                    }
-                }
-                if (isSame) {
-                    return branch;
-                }
-                curr = curr.getParent();
-            }
-        }
-        return null;
+    public static void resetHead(String version) {
+        // Commit commit = getGlobalHEAD();
+        // while (commit.getDate() != null) {
+        // if(commit.)
+        // }
     }
 
     private static Commit findBranchHead(String branchName) {
-        List<Branch> branches = getBranches();
+        List<Branch> branches = Branches.getBranches();
         for (Branch branch : branches) {
             if (branch.getBranchName().equals(branchName)) {
                 return branch.getHead();
@@ -168,7 +105,8 @@ public class Head {
     }
 
     /**
-     * maintain current version commit, make current user_dir with current commit
+     * maintain current version commit HEAD, make current user_dir with current
+     * commit
      * version
      * 
      * @return
@@ -176,9 +114,13 @@ public class Head {
      * @require before we call this method, make sure there is no staging file and
      *          untrack file
      */
-    public static void maintainCommit() throws IOException {
+    public static void maintainHead() throws IOException {
         Commit headCommit = Head.getGlobalHEAD();
         maintainDirectory(headCommit);
+
+        // check dir if there is file is blobs but not on current commit remove it
+        File rootDir = Utils.join(Repositories.CURR_DIR);
+        maintainDir(rootDir, headCommit);
     }
 
     /**
@@ -189,6 +131,7 @@ public class Head {
      * @throws IOException
      */
     private static void maintainDirectory(Commit commit) throws IOException {
+        // adding tracks file for current commit
         Map<String, String> blobs = commit.getCloneBlobs();
         for (Entry<String, String> entry : blobs.entrySet()) {
             File filepath = Utils.join(entry.getKey());
@@ -203,25 +146,23 @@ public class Head {
         }
     }
 
-    // it might separate into Branches class
-    public static boolean containsBranch(String branchName) {
-        File[] branchFiles = Repositories.HEAD_REFS_FOLDER.listFiles();
-        List<File> res = Arrays.stream(branchFiles).filter(file -> file.getName().equals(branchName)).toList();
-        return res.size() == 1;
+    /**
+     * Delete tracked file not from this commit version.
+     * 
+     * @param dir
+     * @param commit the version of commit you are checking
+     */
+    private static void maintainDir(File dir, Commit commit) {
+        Map<String, String> blobs = commit.getCloneBlobs();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                maintainDir(file, commit);
+                continue;
+            }
+            if (Blobs.containsBlobs(file) && !blobs.containsKey(file.toString())) {
+                file.delete();
+            }
+        }
     }
 
-    public static void showBranches() {
-        List<Branch> branches = getBranches();
-        Prompt.logTitle("Branches");
-        Branch currBranch = findBranchByCommit(getGlobalBranch().getBranchName());
-        branches.forEach(branch -> {
-            boolean isCurrentBranch = currBranch.getBranchName().equals(branch.getBranchName());
-            Prompt.log((isCurrentBranch ? "*" : "") + branch.getBranchName());
-        });
-    }
-
-    public static void showBranchesByMessage(String message) {
-        List<Commit> commits = Branches.findCommits(message);
-        commits.stream().forEach(commit -> Prompt.promptLog(commit));
-    }
 }
