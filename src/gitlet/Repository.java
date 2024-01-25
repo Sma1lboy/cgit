@@ -55,7 +55,7 @@ public class Repository {
     }
 
     public void status() throws IOException {
-        Head.showBranches();
+        Branches.showBranches();
         System.out.println();
         Stage.showAdditionFiles();
         System.out.println();
@@ -113,7 +113,7 @@ public class Repository {
     }
 
     public void branch(String branchName) {
-        if (Head.containsBranch(branchName)) {
+        if (Branches.containsBranch(branchName)) {
             Main.exitMessage("A branch with that name already exists.");
         }
         Commit commit = Head.getGlobalHEAD();
@@ -122,16 +122,25 @@ public class Repository {
     }
 
     public void removeBranch(String branchName) {
-        if (!Head.containsBranch(branchName)) {
+        if (!Branches.containsBranch(branchName)) {
             Main.exitMessage("A branch with that name does not exist.");
         }
-        if (Head.getGlobalBranch().getBranchName().equals(branchName)) {
+        if (Branches.getGlobalBranch().getBranchName().equals(branchName)) {
             Main.exitMessage("Cannot remove the current branch.");
         }
         Branches.remove(branchName);
     }
 
     public void find(String message) {
-        Head.showBranchesByMessage(message);
+        Branches.showBranchesByMessage(message);
+    }
+
+    public void reset(String commitVersion) throws IOException {
+        Commit commit = Commits.findByVersion(commitVersion);
+        if (commit == null) {
+            Main.exitMessage("No commit with that id exists.");
+        }
+        Head.checkout(commitVersion);
+
     }
 }

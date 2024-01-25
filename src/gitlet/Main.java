@@ -8,6 +8,33 @@ public class Main {
 
     public static Repository repo = new Repository();
 
+    public static void deleteFolder(File folder) {
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                deleteFolder(file);
+            }
+            file.delete();
+        }
+        folder.delete();
+    }
+
+    public static String[] commandBuilder(String command) {
+        return command.split(" ");
+
+    }
+
+    public static void test(String[] args) throws IOException {
+        // delete gitlet folder
+        File giletFolder = Repositories.GITLET_FOLDER;
+        if (giletFolder.exists()) {
+            deleteFolder(giletFolder);
+        }
+        main(commandBuilder("init"));
+        main(commandBuilder("add test.txt"));
+        main(commandBuilder("commit 'addingtest.txtfile'"));
+        main(commandBuilder("status"));
+    }
+
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             exitMessage("Please enter a command.");
@@ -17,6 +44,10 @@ public class Main {
             repo.init();
         } else {
             switch (args[0]) {
+                case "test": {
+                    test(args);
+                    break;
+                }
                 case "add": {
                     File filepath = Utils.join(Repositories.CURR_DIR, args[1]);
                     if (!filepath.exists()) {
