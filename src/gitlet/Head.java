@@ -66,8 +66,7 @@ public class Head {
         Commit curr = getGlobalHEAD();
         while (curr.getDate() != null) {
             Prompt.promptLog(curr);
-            File prevCommitFile = Utils.join(Repositories.COMMITS_FOLDER, curr.parentHash);
-            curr = Utils.readObject(prevCommitFile, Commit.class);
+            curr = curr.getParent();
         }
     }
 
@@ -219,5 +218,10 @@ public class Head {
             boolean isCurrentBranch = currBranch.getBranchName().equals(branch.getBranchName());
             Prompt.log((isCurrentBranch ? "*" : "") + branch.getBranchName());
         });
+    }
+
+    public static void showBranchesByMessage(String message) {
+        List<Commit> commits = Branches.findCommits(message);
+        commits.stream().forEach(commit -> Prompt.promptLog(commit));
     }
 }

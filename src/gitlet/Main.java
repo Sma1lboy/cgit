@@ -50,6 +50,10 @@ public class Main {
                     repo.globalLog();
                     break;
                 case "find":
+                    if (args.length < 2) {
+                        exitMessage("There should be a message to find.");
+                    }
+                    repo.find(args[1]);
                     break;
                 case "status":
                     repo.status();
