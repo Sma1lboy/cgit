@@ -7,9 +7,25 @@
     <groupId>me.jackson</groupId>
     <artifactId>gitlet</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <name>cgitlet</name>
     <description>cgitlet is a lightweight, Java-based version control system inspired by Git.</description>
     <properties>
         <java.version>17</java.version>
     </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version> <!-- Ensure you're using a recent version -->
+                <configuration>
+                    <source>17</source> <!-- Update this to 7 or higher -->
+                    <target>17</target> <!-- Update this to 7 or higher -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
