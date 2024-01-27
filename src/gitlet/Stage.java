@@ -93,8 +93,10 @@ public class Stage {
         String blobSha1 = stagedAddition.get(filepath.toString());
         if (blobSha1 == null)
             return; // check if in stage area
-        File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobSha1);
-        blobFile.delete();
+
+        // TODO never delete blobs, it works for prev version commit
+        // File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobSha1);
+        // blobFile.delete();
         stagedAddition.remove(filepath.toString());
         save();
     }
