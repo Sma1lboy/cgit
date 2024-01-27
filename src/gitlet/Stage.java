@@ -52,6 +52,30 @@ public class Stage {
         save();
     }
 
+    public static void addBlobToStagedAddition(String filepath, String blobSHA1, Object... objs) {
+        try {
+            load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        stagedAddition.put(filepath, blobSHA1);
+
+        save();
+    }
+
+    public static void addBlobToStagedRemoval(String filepath, String blobSHA1, Object... objs) {
+        try {
+            load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        stagedRemoval.put(filepath, blobSHA1);
+
+        save();
+    }
+
     // save file in stage removal
     public static void addRemovalFile(String filename, File filepath) throws IOException {
         load();
