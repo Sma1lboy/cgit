@@ -1,4 +1,4 @@
-package gitlet;
+package main.java.me.jacksonchen.gitlet;
 
 import java.io.File;
 import java.io.Serializable;

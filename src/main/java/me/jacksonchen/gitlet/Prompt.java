@@ -1,4 +1,4 @@
-package gitlet;
+package main.java.me.jacksonchen.gitlet;
 
 /**
  * Manage prompt format class
