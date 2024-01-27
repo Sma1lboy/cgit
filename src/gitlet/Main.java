@@ -31,7 +31,7 @@ public class Main {
         }
         main(commandBuilder("init"));
         main(commandBuilder("add test.txt"));
-        main(commandBuilder("commit 'addingtest.txtfile'"));
+        main(commandBuilder("commit 'masteraddingtest.txt'"));
         main(commandBuilder("status"));
     }
 
@@ -108,8 +108,16 @@ public class Main {
                     repo.removeBranch(args[1]);
                     break;
                 case "reset":
+                    if (args.length < 2) {
+                        exitMessage("You should using this commend with args");
+                    }
+                    repo.reset(args[1]);
                     break;
                 case "merge":
+                    if (args.length < 2) {
+                        exitMessage("you should use this commend with args");
+                    }
+                    repo.merge(args[1]);
                     break;
                 case "add-remote":
                     break;
