@@ -1,4 +1,4 @@
-package gitlet;
+package main.java.me.jacksonchen.gitlet;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
