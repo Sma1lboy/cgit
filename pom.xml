@@ -18,12 +18,22 @@
         <repository>
             <id>github</id>
             <name>github repo</name>
-            <url>https://github.com/Sma1lboy/cgitlet/</url>
+            <url>https://github.com/Sma1lboy/cgitlet</url>
         </repository>
     </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>3.1.1</version>
+            <type>maven-plugin</type>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version> <!-- Ensure you're using a recent version -->
