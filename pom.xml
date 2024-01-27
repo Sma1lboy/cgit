@@ -14,7 +14,13 @@
         <java.version>17</java.version>
     </properties>
 
-
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>github repo</name>
+            <url>https://github.com/Sma1lboy/cgitlet/</url>
+        </repository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
