@@ -165,4 +165,47 @@ public class Head {
         }
     }
 
+    public static void mergeBranch(String branchName) {
+        Branch givenBranch = Branches.getBranchByName(branchName);
+        Branch headBranch = Branches.getGlobalBranch();
+        Commit splitCommit = headBranch.findSplitPoint(givenBranch);
+        HashMap<String, String> splitBlobs = splitCommit.getCloneBlobs();
+        HashMap<String, String> headBlobs = headBranch.getHead().getCloneBlobs();
+        HashMap<String, String> givenBlobs = givenBranch.getHead().getCloneBlobs();
+
+        // first five properties on github page
+        splitBlobs.forEach((k, v) -> {
+            // both contain current blob
+            if (headBlobs.containsKey(k) && givenBlobs.containsKey(k)) {
+                // both modified
+                if (!v.equals(headBlobs.get(k)) && !v.equals(givenBlobs.get(k))) {
+                    if (!headBlobs.get(k).equals(givenBlobs.get(k))) {
+                        // get file and do some <====== HEAD 之类的
+                        Conflict.reslove(Utils.join(k), Blobs.getBlob(headBlobs.get(k)), headBranch.getBranchName(),
+                                Blobs.getBlob(givenBlobs.get(k)), givenBranch.getBranchName());
+                    }
+                }
+                if (!v.equals(headBlobs.get(k))) {
+                    Stage.addBlobToStagedAddition(k, headBlobs.get(k));
+
+                }
+                if (!v.equals(givenBlobs.get(k))) {
+                    Stage.addBlobToStagedAddition(k, givenBlobs.get(k));
+                }
+            }
+            // if
+            if (headBlobs.containsKey(k) && !givenBlobs.containsKey(k)) {
+                if (v.equals(headBlobs.get(k))) {
+                    Stage.addBlobToStagedRemoval(k, v);
+                }
+            }
+        });
+        // last two rule check
+        givenBlobs.forEach((k, v) -> {
+            if (!splitBlobs.containsKey(k) && !headBlobs.containsKey(k)) {
+                Stage.addBlobToStagedAddition(k, v);
+            }
+        });
+    }
+
 }
