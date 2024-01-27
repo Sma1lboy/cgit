@@ -96,4 +96,14 @@ public class Branches {
         }
         return null;
     }
+
+    /**
+     * Get branch by branch name.
+     * 
+     * @param branchName
+     * @return
+     */
+    public static Branch getBranchByName(String branchName) {
+        return Utils.readObject(Utils.join(Repositories.HEAD_REFS_FOLDER, branchName), Branch.class);
+    }
 }
