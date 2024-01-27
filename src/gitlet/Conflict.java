@@ -22,39 +22,52 @@ public class Conflict {
     public static void resolve(File filepath, Blob headBlob, String headBranchName, Blob givenBlob,
             String givenBranchName) {
 
-        BufferedWriter writer = new BufferedWriter(null);
+        BufferedWriter writer;
         try {
             writer = new BufferedWriter(new FileWriter(filepath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedReader headReader = new BufferedReader(
-                new InputStreamReader(new ByteArrayInputStream(headBlob.content)));
-        BufferedReader givenReader = new BufferedReader(
-                new InputStreamReader(new ByteArrayInputStream(givenBlob.content)));
-        String headLine = "", givenLine = "";
-        boolean isFlag = false;
-        StringBuilder headBuf = new StringBuilder(), givenBuf = new StringBuilder();
-        try {
-            while ((headLine = headReader.readLine()) != null || (givenLine = givenReader.readLine()) != null) {
-                if (headLine == null && isFlag) {
+            BufferedReader headReader = new BufferedReader(
+                    new InputStreamReader(new ByteArrayInputStream(headBlob.content)));
+            BufferedReader givenReader = new BufferedReader(
+                    new InputStreamReader(new ByteArrayInputStream(givenBlob.content)));
+            String headLine = headReader.readLine(), givenLine = givenReader.readLine();
+
+            boolean isFlag = false;
+            StringBuilder headBuf = new StringBuilder(), givenBuf = new StringBuilder();
+            // TODO || givenline havent load
+            while (headLine != null || givenLine != null) {
+                if (headLine == null) {
                     while (givenLine != null) {
-                        writer.write(givenLine);
+                        writer.write(givenLine + "\n");
                         givenLine = givenReader.readLine();
+                    }
+                    if (isFlag) {
+                        writer.write(diffHead(headBranchName));
+                        writer.write(headBuf.toString());
+                        writer.write(diffBreak());
+                        writer.write(givenBuf.toString());
+                        writer.write(diffEnd(givenBranchName));
                     }
                     break;
                 }
-                if (givenLine == null && isFlag) {
+                if (givenLine == null) {
                     while (headLine != null) {
-                        writer.write(headLine);
+                        writer.write(headLine + "\n");
                         headLine = headReader.readLine();
                     }
+                    if (isFlag) {
+                        writer.write(diffHead(headBranchName));
+                        writer.write(headBuf.toString());
+                        writer.write(diffBreak());
+                        writer.write(givenBuf.toString());
+                        writer.write(diffEnd(givenBranchName));
+                    }
+
                     break;
                 }
 
                 if (headLine != null && givenLine != null && !headLine.equals(givenLine)) {
-                    isFlag = false;
-                } else if (headLine != null && givenLine != null && headLine.equals(givenLine)) {
+                    isFlag = true;
+                } else if (headLine != null && givenLine != null && headLine.equals(givenLine) && isFlag) {
                     writer.write(diffHead(headBranchName));
                     writer.write(headBuf.toString());
                     headBuf.setLength(0);
@@ -62,13 +75,17 @@ public class Conflict {
                     writer.write(givenBuf.toString());
                     givenBuf.setLength(0);
                     writer.write(diffEnd(givenBranchName));
+                    isFlag = false;
                 }
                 if (!isFlag) {
                     writer.write(headLine + "\n");
                 } else if (isFlag) {
-                    headBuf.append(headLine);
-                    givenBuf.append(givenLine);
+                    headBuf.append(headLine + "\n");
+                    givenBuf.append(givenLine + "\n");
                 }
+
+                headLine = headReader.readLine();
+                givenLine = givenReader.readLine();
             }
             writer.close();
         } catch (IOException e) {
