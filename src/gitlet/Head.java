@@ -178,12 +178,11 @@ public class Head {
                         Conflict.resolve(Utils.join(k), Blobs.getBlob(headBlobs.get(k)), headBranch.getBranchName(),
                                 Blobs.getBlob(givenBlobs.get(k)), givenBranch.getBranchName());
                     }
-                }
-                if (!v.equals(headBlobs.get(k))) {
+
+                } else if (!v.equals(headBlobs.get(k))) {
                     Stage.addBlobToStagedAddition(k, headBlobs.get(k));
 
-                }
-                if (!v.equals(givenBlobs.get(k))) {
+                } else if (!v.equals(givenBlobs.get(k))) {
                     Stage.addBlobToStagedAddition(k, givenBlobs.get(k));
                 }
             }
