@@ -14,10 +14,6 @@ public class Repository {
     public static final String SENTINEL_COMMIT_ID = "6cf73ef132f3f89a94f4c73ec879aa79ba529e86";
     public static String INIT_PARENT_SHA1 = "0000000000000000000000000000000000000000";
 
-    // HEAD is
-    Stage stagingArea = new Stage();
-    String branch = "master";
-
     public void init() throws IOException {
         // init dirs
         initDirs();
@@ -79,8 +75,9 @@ public class Repository {
         }
         Commit commit = new Commit(message, prevCommit.getSHA1(), blobs, false);
         Stage.clear();
-        Head.setGlobalHEAD(branch, commit);
-        Head.setBranchHEAD(branch, commit);
+        Branch HEADbranch = Branches.getGlobalBranch();
+        Head.setGlobalHEAD(HEADbranch.getBranchName(), commit);
+        Head.setBranchHEAD(HEADbranch.getBranchName(), commit);
         commit.save();
     }
 
@@ -142,5 +139,9 @@ public class Repository {
         }
         Head.checkout(commitVersion);
 
+    }
+
+    public void merge(String branchName) {
+        Head.mergeBranch(branchName);
     }
 }
