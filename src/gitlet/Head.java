@@ -73,7 +73,7 @@ public class Head {
         if (Stage.containsAdditionFiles()) {
             Main.exitMessage("Please commit your changes or stash them before you switch branches.");
         }
-        Commit branchHead = findBranchHead(version);
+        Commit branchHead = getBranchHead(version);
         if (branchHead != null) {
             setGlobalHEAD(version, branchHead);
             maintainHead();
@@ -92,16 +92,6 @@ public class Head {
         // while (commit.getDate() != null) {
         // if(commit.)
         // }
-    }
-
-    private static Commit findBranchHead(String branchName) {
-        List<Branch> branches = Branches.getBranches();
-        for (Branch branch : branches) {
-            if (branch.getBranchName().equals(branchName)) {
-                return branch.getHead();
-            }
-        }
-        return null;
     }
 
     /**
@@ -140,9 +130,13 @@ public class Head {
             }
             File blobFile = Utils.join(Repositories.BLOB_FOLDER, entry.getValue());
             Blob blob = Utils.readObject(blobFile, Blob.class);
-            FileOutputStream fileWriter = new FileOutputStream(filepath);
-            fileWriter.write(blob.content);
-            fileWriter.close();
+            Blob testBlob = new Blob(filepath.getName(), filepath);
+            if (!blob.getSha1().equals(testBlob.getSha1())) {
+                FileOutputStream fileWriter = new FileOutputStream(filepath);
+                fileWriter.write(blob.content);
+                fileWriter.close();
+            }
+
         }
     }
 
@@ -181,7 +175,7 @@ public class Head {
                 if (!v.equals(headBlobs.get(k)) && !v.equals(givenBlobs.get(k))) {
                     if (!headBlobs.get(k).equals(givenBlobs.get(k))) {
                         // get file and do some <====== HEAD 之类的
-                        Conflict.reslove(Utils.join(k), Blobs.getBlob(headBlobs.get(k)), headBranch.getBranchName(),
+                        Conflict.resolve(Utils.join(k), Blobs.getBlob(headBlobs.get(k)), headBranch.getBranchName(),
                                 Blobs.getBlob(givenBlobs.get(k)), givenBranch.getBranchName());
                     }
                 }
