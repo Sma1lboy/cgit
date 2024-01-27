@@ -14,8 +14,8 @@ public class Stage {
     // store the sha1 filepath and sha1 blob
     static HashMap<String, String> stagedAddition;
     static HashMap<String, String> stagedRemoval;
-    static File stageAdditionFile = Utils.join(Repositories.STAGE_FOLDER, "stageaddition");
-    static File stageRemovalFile = Utils.join(Repositories.STAGE_FOLDER, "stagedremoval");
+    static File stageAdditionFile = Utils.join(Repository.STAGE_FOLDER, "stageaddition");
+    static File stageRemovalFile = Utils.join(Repository.STAGE_FOLDER, "stagedremoval");
 
     // init addition dn removal
     private static void load() throws IOException {
@@ -41,7 +41,7 @@ public class Stage {
         load();
 
         Blob blob = new Blob(filename, filepath);
-        File blobFile = Utils.join(Repositories.BLOB_FOLDER, blob.getSha1());
+        File blobFile = Utils.join(Repository.BLOB_FOLDER, blob.getSha1());
         if (blobFile.exists()) {
             return;
         }
@@ -120,7 +120,7 @@ public class Stage {
         load();
         Prompt.logTitle("Staged Files");
         for (String value : stagedAddition.values()) {
-            Blob blob = Utils.readObject(Utils.join(Repositories.BLOB_FOLDER, value), Blob.class);
+            Blob blob = Utils.readObject(Utils.join(Repository.BLOB_FOLDER, value), Blob.class);
             Prompt.log(blob.filename);
         }
     }
@@ -129,7 +129,7 @@ public class Stage {
         load();
         Prompt.logTitle("Removed Files");
         for (String value : stagedRemoval.values()) {
-            Blob blob = Utils.readObject(Utils.join(Repositories.BLOB_FOLDER, value), Blob.class);
+            Blob blob = Utils.readObject(Utils.join(Repository.BLOB_FOLDER, value), Blob.class);
             Prompt.log(blob.filename);
         }
     }
@@ -152,7 +152,7 @@ public class Stage {
     }
 
     private static boolean containsUntrackFile() {
-        File rootDir = Utils.join(Repositories.CURR_DIR);
+        File rootDir = Utils.join(Repository.CURR_DIR);
         return containsUntrackDir(rootDir);
     }
 
@@ -173,7 +173,7 @@ public class Stage {
     }
 
     private static boolean containsModifiedFile() {
-        File rootDir = Utils.join(Repositories.CURR_DIR);
+        File rootDir = Utils.join(Repository.CURR_DIR);
         return containsModifiedDir(rootDir);
     }
 
@@ -187,7 +187,7 @@ public class Stage {
             } else if (file.isFile()) {
                 if (blobs.containsKey(file.toString())) {
                     String blobFilepath = blobs.get(file.toString());
-                    File blobFile = Utils.join(Repositories.BLOB_FOLDER, blobFilepath);
+                    File blobFile = Utils.join(Repository.BLOB_FOLDER, blobFilepath);
                     Blob originBlob = Utils.readObject(blobFile, Blob.class);
                     Blob newBlob = Utils.readObject(file, Blob.class);
                     if (originBlob.content != newBlob.content) {

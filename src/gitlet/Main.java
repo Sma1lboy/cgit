@@ -25,7 +25,7 @@ public class Main {
 
     public static void test(String[] args) throws IOException {
         // delete gitlet folder
-        File giletFolder = Repositories.GITLET_FOLDER;
+        File giletFolder = Repository.GITLET_FOLDER;
         if (giletFolder.exists()) {
             deleteFolder(giletFolder);
         }
@@ -49,7 +49,7 @@ public class Main {
                     break;
                 }
                 case "add": {
-                    File filepath = Utils.join(Repositories.CURR_DIR, args[1]);
+                    File filepath = Utils.join(Repository.CURR_DIR, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
@@ -67,7 +67,7 @@ public class Main {
                     repo.commit(args[1]);
                     break;
                 case "rm":
-                    File filepath = Utils.join(Repositories.CURR_DIR, args[1]);
+                    File filepath = Utils.join(Repository.CURR_DIR, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }

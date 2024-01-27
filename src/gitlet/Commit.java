@@ -71,12 +71,12 @@ public class Commit implements Serializable {
     }
 
     public void save() {
-        File commitFile = Utils.join(Repositories.COMMITS_FOLDER, this.sha1);
+        File commitFile = Utils.join(Repository.COMMITS_FOLDER, this.sha1);
         Utils.writeObject(commitFile, this);
     }
 
     public Commit getParent() {
-        File parentFile = Utils.join(Repositories.COMMITS_FOLDER, parentHash);
+        File parentFile = Utils.join(Repository.COMMITS_FOLDER, parentHash);
         return Utils.readObject(parentFile, Commit.class);
     }
 
@@ -90,5 +90,27 @@ public class Commit implements Serializable {
 
     public String getMessage() {
         return this.message;
+    }
+
+    public static Commit findByVersion(String version) {
+        List<Branch> branches = Branch.getBranches();
+        for (Branch branch : branches) {
+            Commit curr = branch.getHead();
+            while (curr.getDate() != null) {
+                String commitSHA1 = curr.getSHA1();
+                boolean isSame = true;
+                for (int i = 0; i <= 7; i++) {
+                    if (commitSHA1.charAt(i) != version.charAt(i)) {
+                        isSame = false;
+                        break;
+                    }
+                }
+                if (isSame) {
+                    return curr;
+                }
+                curr = curr.getParent();
+            }
+        }
+        return null;
     }
 }

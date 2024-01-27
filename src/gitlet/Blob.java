@@ -20,4 +20,13 @@ public class Blob implements Serializable {
         return this.sha1;
     }
 
+    public static boolean containsBlobs(File file) {
+        Blob testBlob = new Blob(file.getName(), file);
+        File blobFile = Utils.join(Repository.BLOB_FOLDER, testBlob.getSha1());
+        return blobFile.exists();
+    }
+
+    public static Blob getBlob(String blobSHA1) {
+        return Utils.readObject(Utils.join(Repository.BLOB_FOLDER, blobSHA1), Blob.class);
+    }
 }

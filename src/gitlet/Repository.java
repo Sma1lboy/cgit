@@ -13,6 +13,15 @@ public class Repository {
 
     public static final String SENTINEL_COMMIT_ID = "6cf73ef132f3f89a94f4c73ec879aa79ba529e86";
     public static String INIT_PARENT_SHA1 = "0000000000000000000000000000000000000000";
+    public static File CWD = new File(".");
+    public static File GITLET_FOLDER = Utils.join(".gitlet");
+    public static File HEAD = Utils.join(GITLET_FOLDER, "HEAD");
+    public static File HEAD_REFS_FOLDER = Utils.join(GITLET_FOLDER, "heads");
+    public static File LOGS_FOLDER = Utils.join(GITLET_FOLDER, "logs");
+    public static File STAGE_FOLDER = Utils.join(GITLET_FOLDER, "staging");
+    public static File COMMITS_FOLDER = Utils.join(GITLET_FOLDER, "commits");
+    public static File BLOB_FOLDER = Utils.join(GITLET_FOLDER, "blobs");
+    public static String CURR_DIR = System.getProperty("user.dir");
 
     public void init() throws IOException {
         // init dirs
@@ -29,13 +38,13 @@ public class Repository {
     }
 
     public void initDirs() throws IOException {
-        Repositories.GITLET_FOLDER.mkdir();
-        Repositories.HEAD.createNewFile();
-        Repositories.HEAD_REFS_FOLDER.mkdir();
-        Repositories.LOGS_FOLDER.mkdir();
-        Repositories.STAGE_FOLDER.mkdir();
-        Repositories.COMMITS_FOLDER.mkdir();
-        Repositories.BLOB_FOLDER.mkdir();
+        Repository.GITLET_FOLDER.mkdir();
+        Repository.HEAD.createNewFile();
+        Repository.HEAD_REFS_FOLDER.mkdir();
+        Repository.LOGS_FOLDER.mkdir();
+        Repository.STAGE_FOLDER.mkdir();
+        Repository.COMMITS_FOLDER.mkdir();
+        Repository.BLOB_FOLDER.mkdir();
     }
 
     public boolean isStageEmpty() throws IOException {
@@ -51,7 +60,7 @@ public class Repository {
     }
 
     public void status() throws IOException {
-        Branches.showBranches();
+        Branch.showBranches();
         System.out.println();
         Stage.showAdditionFiles();
         System.out.println();
@@ -75,7 +84,7 @@ public class Repository {
         }
         Commit commit = new Commit(message, prevCommit.getSHA1(), blobs, false);
         Stage.clear();
-        Branch HEADbranch = Branches.getGlobalBranch();
+        Branch HEADbranch = Branch.getGlobalBranch();
         Head.setGlobalHEAD(HEADbranch.getBranchName(), commit);
         Head.setBranchHEAD(HEADbranch.getBranchName(), commit);
         commit.save();
@@ -98,7 +107,7 @@ public class Repository {
     }
 
     public void globalLog() {
-        File[] files = Repositories.COMMITS_FOLDER.listFiles();
+        File[] files = Repository.COMMITS_FOLDER.listFiles();
         for (File file : files) {
             Commit commit = Utils.readObject(file, Commit.class);
             Prompt.promptLog(commit);
@@ -110,7 +119,7 @@ public class Repository {
     }
 
     public void branch(String branchName) {
-        if (Branches.containsBranch(branchName)) {
+        if (Branch.containsBranch(branchName)) {
             Main.exitMessage("A branch with that name already exists.");
         }
         Commit commit = Head.getGlobalHEAD();
@@ -119,21 +128,21 @@ public class Repository {
     }
 
     public void removeBranch(String branchName) {
-        if (!Branches.containsBranch(branchName)) {
+        if (!Branch.containsBranch(branchName)) {
             Main.exitMessage("A branch with that name does not exist.");
         }
-        if (Branches.getGlobalBranch().getBranchName().equals(branchName)) {
+        if (Branch.getGlobalBranch().getBranchName().equals(branchName)) {
             Main.exitMessage("Cannot remove the current branch.");
         }
-        Branches.remove(branchName);
+        Branch.remove(branchName);
     }
 
     public void find(String message) {
-        Branches.showBranchesByMessage(message);
+        Branch.showBranchesByMessage(message);
     }
 
     public void reset(String commitVersion) throws IOException {
-        Commit commit = Commits.findByVersion(commitVersion);
+        Commit commit = Commit.findByVersion(commitVersion);
         if (commit == null) {
             Main.exitMessage("No commit with that id exists.");
         }

@@ -18,7 +18,7 @@ public class Head {
 
     public static void setGlobalHEAD(String branchName, Commit commit) {
         Branch branch = new Branch(branchName, commit);
-        Utils.writeObject(Repositories.HEAD, branch);
+        Utils.writeObject(Repository.HEAD, branch);
     }
 
     /**
@@ -27,18 +27,18 @@ public class Head {
      * @return
      */
     public static Commit getGlobalHEAD() {
-        Branch branch = Utils.readObject(Repositories.HEAD, Branch.class);
+        Branch branch = Utils.readObject(Repository.HEAD, Branch.class);
         return branch.getHead();
     }
 
     public static void setBranchHEAD(String branchName, Commit commit) {
         Branch branch = new Branch(branchName, commit);
-        File branchFile = Utils.join(Repositories.HEAD_REFS_FOLDER, branchName);
+        File branchFile = Utils.join(Repository.HEAD_REFS_FOLDER, branchName);
         Utils.writeObject(branchFile, branch);
     }
 
     public static Commit getBranchHead(String branchName) {
-        File branchFile = Utils.join(Repositories.HEAD_REFS_FOLDER, branchName);
+        File branchFile = Utils.join(Repository.HEAD_REFS_FOLDER, branchName);
         if (!branchFile.exists()) {
             // todo doesnt exist
             System.out.println("");
@@ -80,7 +80,7 @@ public class Head {
 
             return;
         }
-        Commit versionCommit = Commits.findByVersion(version);
+        Commit versionCommit = Commit.findByVersion(version);
         if (versionCommit != null) {
             setGlobalHEAD(version, versionCommit);
             maintainHead();
@@ -109,7 +109,7 @@ public class Head {
         maintainDirectory(headCommit);
 
         // check dir if there is file is blobs but not on current commit remove it
-        File rootDir = Utils.join(Repositories.CURR_DIR);
+        File rootDir = Utils.join(Repository.CURR_DIR);
         maintainDir(rootDir, headCommit);
     }
 
@@ -128,7 +128,7 @@ public class Head {
             if (!filepath.exists()) {
                 filepath.createNewFile();
             }
-            File blobFile = Utils.join(Repositories.BLOB_FOLDER, entry.getValue());
+            File blobFile = Utils.join(Repository.BLOB_FOLDER, entry.getValue());
             Blob blob = Utils.readObject(blobFile, Blob.class);
             Blob testBlob = new Blob(filepath.getName(), filepath);
             if (!blob.getSha1().equals(testBlob.getSha1())) {
@@ -153,15 +153,15 @@ public class Head {
                 maintainDir(file, commit);
                 continue;
             }
-            if (Blobs.containsBlobs(file) && !blobs.containsKey(file.toString())) {
+            if (Blob.containsBlobs(file) && !blobs.containsKey(file.toString())) {
                 file.delete();
             }
         }
     }
 
     public static void mergeBranch(String branchName) {
-        Branch givenBranch = Branches.getBranchByName(branchName);
-        Branch headBranch = Branches.getGlobalBranch();
+        Branch givenBranch = Branch.getBranchByName(branchName);
+        Branch headBranch = Branch.getGlobalBranch();
         Commit splitCommit = headBranch.findSplitPoint(givenBranch);
         HashMap<String, String> splitBlobs = splitCommit.getCloneBlobs();
         HashMap<String, String> headBlobs = headBranch.getHead().getCloneBlobs();
@@ -175,8 +175,8 @@ public class Head {
                 if (!v.equals(headBlobs.get(k)) && !v.equals(givenBlobs.get(k))) {
                     if (!headBlobs.get(k).equals(givenBlobs.get(k))) {
                         // get file and do some <====== HEAD 之类的
-                        Conflict.resolve(Utils.join(k), Blobs.getBlob(headBlobs.get(k)), headBranch.getBranchName(),
-                                Blobs.getBlob(givenBlobs.get(k)), givenBranch.getBranchName());
+                        Conflict.resolve(Utils.join(k), Blob.getBlob(headBlobs.get(k)), headBranch.getBranchName(),
+                                Blob.getBlob(givenBlobs.get(k)), givenBranch.getBranchName());
                     }
 
                 } else if (!v.equals(headBlobs.get(k))) {
