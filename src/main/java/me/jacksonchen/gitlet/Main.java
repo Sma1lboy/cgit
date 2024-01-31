@@ -129,6 +129,13 @@ public class Main {
                     break;
                 case "pull":
                     break;
+                case "clone": {
+                    if (args.length < 2) {
+                        exitMessage("clone need valid url");
+                    }
+                    repo.clone(args[1]);
+                    break;
+                }
                 default:
                     exitMessage("No command with that name exists.");
                     break;
