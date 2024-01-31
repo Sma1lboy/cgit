@@ -1,11 +1,13 @@
-package main.java.me.jacksonchen.gitlet;
+package me.jacksonchen.gitlet;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 
 /**
  * staging area
@@ -46,6 +48,7 @@ public class Stage {
             return;
         }
         Utils.writeObject(blobFile, blob);
+        System.out.println(filepath.toString());
         // add to stage
         stagedAddition.put(filepath.toString(), blob.getSha1());
         // save it
@@ -200,4 +203,36 @@ public class Stage {
         return false;
     }
 
+    public static void showUntrackFile() {
+        try {
+            load();
+            Prompt.logTitle("UntrackFile");
+            showUntrackFile(Repository.CURR_DIR);
+            if (untrackCount >= 10) {
+                Prompt.log("...", Color.ANSI_RED);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static int untrackCount = 0;
+
+    private static void showUntrackFile(File dir) {
+        if (untrackCount >= 10) {
+            return;
+        }
+        File[] rootDir = dir.listFiles();
+        Map<String, String> blobs = Head.getGlobalHEAD().getCloneBlobs();
+        for (File file : rootDir) {
+            if (file.isDirectory()) {
+                showUntrackFile(file);
+            } else if (file.isFile()) {
+                if (!blobs.containsKey(file.toString())) {
+                    untrackCount++;
+                    Prompt.log(Color.ANSI_RED + file.toString() + Color.ANSI_RED);
+                }
+            }
+        }
+    }
 }

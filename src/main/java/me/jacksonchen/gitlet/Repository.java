@@ -1,4 +1,4 @@
-package main.java.me.jacksonchen.gitlet;
+package me.jacksonchen.gitlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class Repository {
     public static File STAGE_FOLDER = Utils.join(GITLET_FOLDER, "staging");
     public static File COMMITS_FOLDER = Utils.join(GITLET_FOLDER, "commits");
     public static File BLOB_FOLDER = Utils.join(GITLET_FOLDER, "blobs");
-    public static String CURR_DIR = System.getProperty("user.dir");
+    public static File CURR_DIR = Utils.join(System.getProperty("user.dir"));
 
     public void init() throws IOException {
         // init dirs
@@ -65,6 +65,8 @@ public class Repository {
         Stage.showAdditionFiles();
         System.out.println();
         Stage.showRemovalFiles();
+        System.out.println();
+        Stage.showUntrackFile();
         System.out.println();
     }
 

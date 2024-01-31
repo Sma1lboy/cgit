@@ -1,4 +1,4 @@
-package main.java.me.jacksonchen.gitlet;
+package me.jacksonchen.gitlet;
 
 public class Status {
 

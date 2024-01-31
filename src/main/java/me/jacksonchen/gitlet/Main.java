@@ -1,4 +1,4 @@
-package main.java.me.jacksonchen.gitlet;
+package me.jacksonchen.gitlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class Main {
                     break;
                 }
                 case "add": {
-                    File filepath = Utils.join(Repository.CURR_DIR, args[1]);
+                    File filepath = Utils.join(Repository.CWD, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
@@ -67,7 +67,7 @@ public class Main {
                     repo.commit(args[1]);
                     break;
                 case "rm":
-                    File filepath = Utils.join(Repository.CURR_DIR, args[1]);
+                    File filepath = Utils.join(Repository.CWD, args[1]);
                     if (!filepath.exists()) {
                         exitMessage("file doesn't exist: " + filepath);
                     }
