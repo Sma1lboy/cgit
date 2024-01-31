@@ -2,7 +2,7 @@
 
 ## Introduction
 
-cgitlet is a lightweight, Java-based version control system inspired by Git. It offers essential functionalities for tracking and managing changes in your codebase, making it suitable for personal projects and learning purposes. 
+Cgitlet is a lightweight, Java-based version control system inspired by Git. It offers essential functionalities for tracking and managing changes in your codebase, making it suitable for personal projects and learning purposes. 
 
 ## Features
 
