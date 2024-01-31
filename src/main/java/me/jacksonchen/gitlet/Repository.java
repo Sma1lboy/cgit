@@ -2,6 +2,7 @@ package me.jacksonchen.gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,6 +23,7 @@ public class Repository {
     public static File COMMITS_FOLDER = Utils.join(GITLET_FOLDER, "commits");
     public static File BLOB_FOLDER = Utils.join(GITLET_FOLDER, "blobs");
     public static File CURR_DIR = Utils.join(System.getProperty("user.dir"));
+    public static File REMOTE_DIR = Utils.join(GITLET_FOLDER, "remotes");
 
     public void init() throws IOException {
         // init dirs
@@ -45,6 +47,7 @@ public class Repository {
         Repository.STAGE_FOLDER.mkdir();
         Repository.COMMITS_FOLDER.mkdir();
         Repository.BLOB_FOLDER.mkdir();
+        Repository.REMOTE_DIR.mkdir();
     }
 
     public boolean isStageEmpty() throws IOException {
@@ -154,5 +157,13 @@ public class Repository {
 
     public void merge(String branchName) {
         Head.mergeBranch(branchName);
+    }
+
+    public void clone(String url) {
+        try {
+            Network.download(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
