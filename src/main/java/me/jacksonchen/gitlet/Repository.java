@@ -2,7 +2,6 @@ package me.jacksonchen.gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +22,7 @@ public class Repository {
     public static File COMMITS_FOLDER = Utils.join(GITLET_FOLDER, "commits");
     public static File BLOB_FOLDER = Utils.join(GITLET_FOLDER, "blobs");
     public static File CURR_DIR = Utils.join(System.getProperty("user.dir"));
-    public static File REMOTE_DIR = Utils.join(GITLET_FOLDER, "remotes");
+    public static File REMOTES_DIR = Utils.join(GITLET_FOLDER, "remotes");
 
     public void init() throws IOException {
         // init dirs
@@ -47,7 +46,7 @@ public class Repository {
         Repository.STAGE_FOLDER.mkdir();
         Repository.COMMITS_FOLDER.mkdir();
         Repository.BLOB_FOLDER.mkdir();
-        Repository.REMOTE_DIR.mkdir();
+        Repository.REMOTES_DIR.mkdir();
     }
 
     public boolean isStageEmpty() throws IOException {
@@ -159,11 +158,39 @@ public class Repository {
         Head.mergeBranch(branchName);
     }
 
-    public void clone(String url) {
+    public void remoteAdd(String name, String url) {
+        Remote remote = new Remote(name, url);
+        remote.save();
+    }
+
+    public void remoteRename(String oldName, String newName) {
         try {
-            Network.download(url);
+            Remote remote = Remote.readRemote(oldName);
+            remote.delete();
+            remote.setName(newName);
+            remote.save();
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.exitMessage("Cannot find remote with this name: " + oldName);
+        }
+    }
+
+    public void remoteGetURL(String urlName) {
+        try {
+            Remote remote = Remote.readRemote(urlName);
+            System.out.println(remote.getURL());
+        } catch (Exception e) {
+            Main.exitMessage("Cannot find remote with this name: " + urlName);
+        }
+    }
+
+    public void remoteSetURL(String urlName, String url) {
+        try {
+            Remote remote = Remote.readRemote(urlName);
+            remote.delete();
+            remote.setURL(url);
+            remote.save();
+        } catch (Exception e) {
+            Main.exitMessage("Cannot find remote with this name: " + urlName);
         }
     }
 }
