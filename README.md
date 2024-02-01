@@ -24,6 +24,24 @@ cgitlet supports a variety of commands that are similar to Git, including but no
 
 Advanced features such as handling remote repositories (`add-remote`, `rm-remote`, `push`, `fetch`, `pull`) are also available.
 
+## Prerequisite 
+
+- CURL
+
+  - Linux
+
+      ```bash
+      sudo apt install curl
+      ```
+
+  - Mac
+  
+    ```bash
+    brew install curl
+    ```
+  
+    
+
 ## Installation
 
 
