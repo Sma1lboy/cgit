@@ -119,9 +119,32 @@ public class Main {
                     }
                     repo.merge(args[1]);
                     break;
-                case "add-remote":
-                    break;
-                case "rm-remote":
+                case "remote":
+                    if (args.length < 3) {
+                        exitMessage("more comment need for this");
+                    }
+                    switch (args[1]) {
+                        case "add": {
+                            // add remote
+                            repo.remoteAdd(args[2], args[3]);
+                            break;
+                        }
+                        case "rename": {
+                            repo.remoteRename(args[2], args[3]);
+                            break;
+                        }
+                        case "get-url": {
+                            repo.remoteGetURL(args[2]);
+                            break;
+                        }
+                        case "set-url": {
+                            repo.remoteSetURL(args[2], args[3]);
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+
                     break;
                 case "push":
                     break;
