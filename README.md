@@ -1,4 +1,4 @@
-# cgitlet: A Java-Based Version Control System
+# CGit: A Java-Based Version Control System
 
 ## Introduction
 
